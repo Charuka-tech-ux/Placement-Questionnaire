@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ManikShan Foreign Employment PVT LTD</title>
+    <!-- Load jspdf for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- Load Tailwind CSS for modern, responsive styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom font and basic body setup */
+        body { font-family: "Inter", sans-serif; background-color: #f0f4f8; }
+        /* Style for required radio checked status */
+        input[type="radio"]:checked + label {
+            color: #1d4ed8; /* Blue-700 */
+            font-weight: 600;
+        }
+        /* Custom style for the reason input */
+        .reason-input-field {
+            border: 1px solid #dc2626 !important; /* Red-600 */
+            background-color: #fef2f2; /* Red-50 */
+        }
+        /* Ensure the form scales down gracefully on mobile */
+        .form-group {
+            margin-bottom: 1.5rem; /* Better vertical spacing */
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8">
+
+<form id="questionnaireForm" onsubmit="event.preventDefault(); generatePDF();" class="container bg-white p-6 sm:p-10 rounded-xl shadow-2xl mx-auto w-full max-w-4xl border border-blue-100">
+    <h1 class="text-2xl sm:text-3xl font-extrabold text-blue-800 text-center mb-4">ManikShan Foreign Employment PVT LTD</h1>
+    <p class="text-center text-gray-500 mb-8 text-sm sm:text-base">All fields are mandatory. Please fill in all details and provide a reason if you select 'No' for any of the questions.</p>
+
+    <!-- Helper function to toggle reason fields based on radio selection -->
+    <script>
+        const toggleReason = (name, show) => {
+            const container = document.getElementById(`${name}ReasonContainer`);
+            const reasonInput = document.getElementById(`${name}Reason`);
+            if (container) {
+                // Toggle visibility
+                container.classList.toggle('hidden', !show);
+                
+                // Toggle 'required' status for submission validation
+                if (reasonInput) {
+                    reasonInput.required = show;
+                }
+                
+                if (show) {
+                    document.getElementById(`${name}Reason`).focus();
+                } else {
+                    // Clear the input if it's being hidden
+                    document.getElementById(`${name}Reason`).value = ''; 
+                }
+            }
+        };
+
+        // Initialize visibility on load (all should be hidden since 'Yes' is default)
+        document.addEventListener('DOMContentLoaded', () => {
+            const fieldsWithReasons = ['agency', 'location', 'customPlacement', 'workedUSA', 'familyUSA', 'medical', 'doctorCare', 'crime', 'visa'];
+            fieldsWithReasons.forEach(name => {
+                const noRadio = document.getElementById(`${name}No`);
+                // Check if 'No' is checked on load. If not (default 'Yes'), hide and un-require the reason field.
+                toggleReason(name, noRadio && noRadio.checked);
+            });
+        });
+    </script>
+
+    <!-- Personal Details Section -->
+    <div class="space-y-5">
+        <h2 class="text-xl font-semibold text-gray-700 border-b pb-2 mb-4">1. Personal Details</h2>
+        <div class="grid md:grid-cols-2 gap-6">
+            <div class="form-group">
+                <label for="name" class="block font-medium text-gray-600 mb-1">Name:</label>
+                <!-- Cleared and set to REQUIRED -->
+                <input type="text" id="name" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+            </div>
+            <div class="form-group">
+                <label for="email" class="block font-medium text-gray-600 mb-1">Email:</label>
+                <!-- Cleared and set to REQUIRED -->
+                <input type="email" id="email" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="skype" class="block font-medium text-gray-600 mb-1">Skype ID:</label>
+            <!-- Cleared and set to REQUIRED -->
+            <input type="text" id="skype" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+        </div>
+    </div>
+    
+    <div class="my-8 border-t border-gray-200"></div>
+
+    <!-- Referral & Agency Section -->
+    <div class="space-y-5">
+        <h2 class="text-xl font-semibold text-gray-700 border-b pb-2 mb-4">2. Program & Referral Information</h2>
+        <div class="grid md:grid-cols-2 gap-6">
+            <div class="form-group">
+                <label for="referralSource" class="block font-medium text-gray-600 mb-1">How did you hear about IRES?</label>
+                <!-- Cleared and set to REQUIRED -->
+                <input type="text" id="referralSource" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+            </div>
+            <div class="form-group">
+                <label for="referredBy" class="block font-medium text-gray-600 mb-1">Referred by:</label>
+                <!-- Cleared and set to REQUIRED -->
+                <input type="text" id="referredBy" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+            </div>
+        </div>
+        <!-- Question with Reason field (Default to YES) -->
+        <div class="form-group">
+            <label class="block font-medium text-gray-600 mb-2">Working with any other Agency? <span class="text-red-500">*</span></label>
+            <div class="radio-group flex flex-wrap gap-x-8 gap-y-4">
+                <div class="flex items-center"><input type="radio" name="agency" value="Yes" id="agencyYes" required class="h-4 w-4 text-blue-600" onchange="toggleReason('agency', false)" checked><label for="agencyYes" class="ml-2 text-gray-700">Yes</label></div>
+                <div class="flex items-center"><input type="radio" name="agency" value="No" id="agencyNo" required class="h-4 w-4 text-blue-600" onchange="toggleReason('agency', true)"><label for="agencyNo" class="ml-2 text-gray-700">No</label></div>
+            </div>
+            <div id="agencyReasonContainer" class="mt-3 hidden transition duration-300">
+                <label for="agencyReason" class="block text-sm text-red-600 mb-1">Please specify reason for NO:</label>
+                <input type="text" id="agencyReason" class="w-full p-2 rounded-lg reason-input-field" value="">
+            </div>
+        </div>
+    </div>
+
+    <div class="my-8 border-t border-gray-200"></div>
+
+    <!-- Program Choices Section -->
+    <div class="space-y-5">
+        <h2 class="text-xl font-semibold text-gray-700 border-b pb-2 mb-4">3. Placement Preferences</h2>
+        <div class="grid md:grid-cols-2 gap-6">
+            <div class="form-group">
+                <label for="firstChoice" class="block font-medium text-gray-600 mb-1">First Choice Department:</label>
+                <!-- Cleared and set to REQUIRED -->
+                <input type="text" id="firstChoice" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+            </div>
+            <div class="form-group">
+                <label for="secondChoice" class="block font-medium text-gray-600 mb-1">Second Choice Department:</label>
+                <!-- Cleared and set to REQUIRED -->
+                <input type="text" id="secondChoice" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+            </div>
+        </div>
+        <div class="grid md:grid-cols-2 gap-6">
+            <div class="form-group">
+                <label for="programStart" class="block font-medium text-gray-600 mb-1">When do you want to begin your program?</label>
+                <!-- Cleared and set to REQUIRED -->
+                <input type="text" id="programStart" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+            </div>
+            <div class="form-group">
+                <label class="block font-medium text-gray-600 mb-2">Program Length: <span class="text-red-500">*</span></label>
+                <div class="radio-group flex flex-wrap gap-x-8 gap-y-4">
+                    <div class="flex items-center"><input type="radio" name="length" value="6" id="len6" required class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"><label for="len6" class="ml-2 text-gray-700">6 months</label></div>
+                    <div class="flex items-center"><input type="radio" name="length" value="9" id="len9" required class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"><label for="len9" class="ml-2 text-gray-700">9 months</label></div>
+                    <div class="flex items-center"><input type="radio" name="length" value="12" id="len12" required class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500" checked><label for="len12" class="ml-2 text-gray-700">12 months</label></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="my-8 border-t border-gray-200"></div>
+
+    <!-- USA and Placement Status Section -->
+    <div class="space-y-5">
+        <h2 class="text-xl font-semibold text-gray-700 border-b pb-2 mb-4">4. USA and Placement Status</h2>
+        
+        <div class="grid sm:grid-cols-2 gap-6">
+            <!-- Question with Reason field: Location (Default to YES) -->
+            <div class="form-group">
+                <label class="block font-medium text-gray-600 mb-2">Are you 100% open to ALL locations? <span class="text-red-500">*</span></label>
+                <div class="radio-group flex flex-wrap gap-x-8 gap-y-4">
+                    <div class="flex items-center"><input type="radio" name="location" value="Yes" id="locYes" required class="h-4 w-4 text-blue-600" onchange="toggleReason('location', false)" checked><label for="locYes" class="ml-2 text-gray-700">Yes</label></div>
+                    <div class="flex items-center"><input type="radio" name="location" value="No" id="locNo" required class="h-4 w-4 text-blue-600" onchange="toggleReason('location', true)"><label for="locNo" class="ml-2 text-gray-700">No</label></div>
+                </div>
+                <div id="locationReasonContainer" class="mt-3 hidden transition duration-300">
+                    <label for="locationReason" class="block text-sm text-red-600 mb-1">Please specify location restriction for NO:</label>
+                    <input type="text" id="locationReason" class="w-full p-2 rounded-lg reason-input-field" value="">
+                </div>
+            </div>
+
+            <!-- Question with Reason field: Custom Placement (Default to YES) -->
+            <div class="form-group">
+                <label class="block font-medium text-gray-600 mb-2">Do you want a Custom Placement with another candidate? <span class="text-red-500">*</span></label>
+                <div class="radio-group flex flex-wrap gap-x-8 gap-y-4">
+                    <div class="flex items-center"><input type="radio" name="customPlacement" value="Yes" id="cpYes" required class="h-4 w-4 text-blue-600" onchange="toggleReason('customPlacement', false)" checked><label for="cpYes" class="ml-2 text-gray-700">Yes</label></div>
+                    <div class="flex items-center"><input type="radio" name="customPlacement" value="No" id="cpNo" required class="h-4 w-4 text-blue-600" onchange="toggleReason('customPlacement', true)"><label for="cpNo" class="ml-2 text-gray-700">No</label></div>
+                </div>
+                <div id="customPlacementReasonContainer" class="mt-3 hidden transition duration-300">
+                    <label for="customPlacementReason" class="block text-sm text-red-600 mb-1">Please specify reason for NO:</label>
+                    <input type="text" id="customPlacementReason" class="w-full p-2 rounded-lg reason-input-field" value="">
+                </div>
+            </div>
+
+            <!-- Question with Reason field: Worked USA (Default to YES) -->
+            <div class="form-group">
+                <label class="block font-medium text-gray-600 mb-2">Have you ever trained/worked in the USA? <span class="text-red-500">*</span></label>
+                <div class="radio-group flex flex-wrap gap-x-8 gap-y-4">
+                    <div class="flex items-center"><input type="radio" name="workedUSA" value="Yes" id="usaWorkYes" required class="h-4 w-4 text-blue-600" onchange="toggleReason('workedUSA', false)" checked><label for="usaWorkYes" class="ml-2 text-gray-700">Yes</label></div>
+                    <div class="flex items-center"><input type="radio" name="workedUSA" value="No" id="usaWorkNo" required class="h-4 w-4 text-blue-600" onchange="toggleReason('workedUSA', true)"><label for="usaWorkNo" class="ml-2 text-gray-700">No</label></div>
+                </div>
+                <div id="workedUSAReasonContainer" class="mt-3 hidden transition duration-300">
+                    <label for="workedUSAReason" class="block text-sm text-red-600 mb-1">Please specify reason for NO:</label>
+                    <input type="text" id="workedUSAReason" class="w-full p-2 rounded-lg reason-input-field" value="">
+                </div>
+            </div>
+
+            <!-- Question with Reason field: Family USA (Default to YES) -->
+            <div class="form-group">
+                <label class="block font-medium text-gray-600 mb-2">Do you have any family that resides in the USA? <span class="text-red-500">*</span></label>
+                <div class="radio-group flex flex-wrap gap-x-8 gap-y-4">
+                    <div class="flex items-center"><input type="radio" name="familyUSA" value="Yes" id="familyYes" required class="h-4 w-4 text-blue-600" onchange="toggleReason('familyUSA', false)" checked><label for="familyYes" class="ml-2 text-gray-700">Yes</label></div>
+                    <div class="flex items-center"><input type="radio" name="familyUSA" value="No" id="familyNo" required class="h-4 w-4 text-blue-600" onchange="toggleReason('familyUSA', true)"><label for="familyNo" class="ml-2 text-gray-700">No</label></div>
+                </div>
+                <div id="familyUSAReasonContainer" class="mt-3 hidden transition duration-300">
+                    <label for="familyUSAReason" class="block text-sm text-red-600 mb-1">Please specify reason for NO:</label>
+                    <input type="text" id="familyUSAReason" class="w-full p-2 rounded-lg reason-input-field" value="">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="my-8 border-t border-gray-200"></div>
+
+    <!-- Health & Legal Status Section -->
+    <div class="space-y-5">
+        <h2 class="text-xl font-semibold text-gray-700 border-b pb-2 mb-4">5. Health & Legal Status</h2>
+        
+        <div class="grid md:grid-cols-2 gap-6">
+            <div class="form-group col-span-2">
+                <label class="block font-medium text-gray-600 mb-2">Are you vaccinated? <span class="text-red-500">*</span></label>
+                <div class="radio-group flex flex-wrap gap-x-8 gap-y-4">
+                    <div class="flex items-center"><input type="radio" name="vaccinated" value="Yes" id="vaxYes" required class="h-4 w-4 text-blue-600" checked><label for="vaxYes" class="ml-2 text-gray-700">Yes</label></div>
+                    <div class="flex items-center"><input type="radio" name="vaccinated" value="No" id="vaxNo" required class="h-4 w-4 text-blue-600"><label for="vaxNo" class="ml-2 text-gray-700">No</label></div>
+                </div>
+            </div>
+            <div class="form-group col-span-2">
+                <label for="vaccineType" class="block font-medium text-gray-600 mb-1">If yes, what vaccine?</label>
+                <!-- Cleared and set to REQUIRED -->
+                <input type="text" id="vaccineType" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+            </div>
+        </div>
+
+        <div class="my-6 border-t border-gray-200"></div>
+        
+        <div class="grid sm:grid-cols-2 gap-6">
+            <!-- Question with Reason field: Medical (Default to YES) -->
+            <div class="form-group">
+                <label class="block font-medium text-gray-600 mb-2">Do you have any pre-existing medical conditions? <span class="text-red-500">*</span></label>
+                <div class="radio-group flex flex-wrap gap-x-8 gap-y-4">
+                    <div class="flex items-center"><input type="radio" name="medical" value="Yes" id="medYes" required class="h-4 w-4 text-blue-600" onchange="toggleReason('medical', false)" checked><label for="medYes" class="ml-2 text-gray-700">Yes</label></div>
+                    <div class="flex items-center"><input type="radio" name="medical" value="No" id="medNo" required class="h-4 w-4 text-blue-600" onchange="toggleReason('medical', true)"><label for="medNo" class="ml-2 text-gray-700">No</label></div>
+                </div>
+                <div id="medicalReasonContainer" class="mt-3 hidden transition duration-300">
+                    <label for="medicalReason" class="block text-sm text-red-600 mb-1">Please specify reason for NO:</label>
+                    <input type="text" id="medicalReason" class="w-full p-2 rounded-lg reason-input-field" value="">
+                </div>
+            </div>
+
+            <!-- Question with Reason field: Doctor Care (Default to YES) -->
+            <div class="form-group">
+                <label class="block font-medium text-gray-600 mb-2">Are you currently under a doctor’s care? <span class="text-red-500">*</span></label>
+                <div class="radio-group flex flex-wrap gap-x-8 gap-y-4">
+                    <div class="flex items-center"><input type="radio" name="doctorCare" value="Yes" id="docYes" required class="h-4 w-4 text-blue-600" onchange="toggleReason('doctorCare', false)" checked><label for="docYes" class="ml-2 text-gray-700">Yes</label></div>
+                    <div class="flex items-center"><input type="radio" name="doctorCare" value="No" id="docNo" required class="h-4 w-4 text-blue-600" onchange="toggleReason('doctorCare', true)"><label for="docNo" class="ml-2 text-gray-700">No</label></div>
+                </div>
+                <div id="doctorCareReasonContainer" class="mt-3 hidden transition duration-300">
+                    <label for="doctorCareReason" class="block text-sm text-red-600 mb-1">Please specify reason for NO:</label>
+                    <input type="text" id="doctorCareReason" class="w-full p-2 rounded-lg reason-input-field" value="">
+                </div>
+            </div>
+
+            <!-- Question with Reason field: Crime (Default to YES) -->
+            <div class="form-group">
+                <label class="block font-medium text-gray-600 mb-2">Have you ever been arrested or convicted of a crime? <span class="text-red-500">*</span></label>
+                <div class="radio-group flex flex-wrap gap-x-8 gap-y-4">
+                    <div class="flex items-center"><input type="radio" name="crime" value="Yes" id="crimeYes" required class="h-4 w-4 text-blue-600" onchange="toggleReason('crime', false)" checked><label for="crimeYes" class="ml-2 text-gray-700">Yes</label></div>
+                    <div class="flex items-center"><input type="radio" name="crime" value="No" id="crimeNo" required class="h-4 w-4 text-blue-600" onchange="toggleReason('crime', true)"><label for="crimeNo" class="ml-2 text-gray-700">No</label></div>
+                </div>
+                <div id="crimeReasonContainer" class="mt-3 hidden transition duration-300">
+                    <label for="crimeReason" class="block text-sm text-red-600 mb-1">Please specify reason for NO:</label>
+                    <input type="text" id="crimeReason" class="w-full p-2 rounded-lg reason-input-field" value="">
+                </div>
+            </div>
+
+            <!-- Question with Reason field: Visa (Default to YES) -->
+            <div class="form-group">
+                <label class="block font-medium text-gray-600 mb-2">Have you ever been denied a US Visa or denied entry? <span class="text-red-500">*</span></label>
+                <div class="radio-group flex flex-wrap gap-x-8 gap-y-4">
+                    <div class="flex items-center"><input type="radio" name="visa" value="Yes" id="visaYes" required class="h-4 w-4 text-blue-600" onchange="toggleReason('visa', false)" checked><label for="visaYes" class="ml-2 text-gray-700">Yes</label></div>
+                    <div class="flex items-center"><input type="radio" name="visa" value="No" id="visaNo" required class="h-4 w-4 text-blue-600" onchange="toggleReason('visa', true)"><label for="visaNo" class="ml-2 text-gray-700">No</label></div>
+                </div>
+                <div id="visaReasonContainer" class="mt-3 hidden transition duration-300">
+                    <label for="visaReason" class="block text-sm text-red-600 mb-1">Please specify reason for NO:</label>
+                    <input type="text" id="visaReason" class="w-full p-2 rounded-lg reason-input-field" value="">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Download Button -->
+    <!-- The form submission is tied to this button via the form's onsubmit handler -->
+    <button type="submit" class="mt-10 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg text-xl shadow-lg transition duration-200 ease-in-out transform hover:scale-[1.01] focus:outline-none focus:ring-4 focus:ring-green-500 focus:ring-opacity-50 w-full">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        Download Professional PDF Report
+    </button>
+</form>
+
+<script>
+    // PDF Generation Logic (kept robust and unchanged)
+    function generatePDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+
+        // --- Configuration ---
+        const pageHeight = doc.internal.pageSize.getHeight();
+        const docWidth = doc.internal.pageSize.getWidth();
+        const marginX = 20;
+        const contentWidth = docWidth - (2 * marginX);
+        
+        let yPos = 20;
+        const sectionSpacing = 10;
+        let pageNumber = 1;
+
+        // --- Helper Functions ---
+
+        const getRadioValue = (name) => {
+            const radios = document.getElementsByName(name);
+            for (let i = 0; i < radios.length; i++) {
+                if (radios[i].checked) return radios[i].value;
+            }
+            return 'N/A';
+        };
+
+        const getReason = (name, radioValue) => {
+            // Only return reason if the radio value is 'No' (or equivalent)
+            if (radioValue === 'No') {
+                const reasonInput = document.getElementById(`${name}Reason`);
+                // Use trimmed value or default to a message if empty but required
+                const reason = reasonInput ? reasonInput.value.trim() : '';
+                return reason || 'No reason provided by applicant.';
+            }
+            return null;
+        };
+
+        const checkPageBreak = (currentY, spaceNeeded) => {
+            if (currentY + spaceNeeded > pageHeight - 20) { // 20mm from the bottom
+                doc.addPage();
+                yPos = 20;
+                pageNumber++;
+                
+                // Add header on new page
+                doc.setFontSize(14).setFont(undefined, 'bold').setTextColor(25, 25, 112);
+                doc.text("ManikShan Foreign Employment PVT LTD (Continued)", docWidth / 2, yPos, { align: 'center' });
+                yPos += 8;
+                doc.line(marginX, yPos, docWidth - marginX, yPos);
+                yPos += sectionSpacing;
+            }
+        };
+
+        const addDetail = (doc, question, answer, reason = null) => {
+            // Estimate space needed: 1 line for Q, 1-2 lines for A, 1-2 lines for R. Max 5 lines = 35mm
+            checkPageBreak(yPos, 35); 
+
+            const questionX = marginX;
+            const answerX = marginX + contentWidth * 0.50;
+            const answerWidth = contentWidth * 0.50 - 2;
+
+            // 1. Draw Question (Left Column)
+            doc.setFontSize(10).setFont(undefined, 'bold').setTextColor(40, 40, 40); 
+            const splitQuestion = doc.splitTextToSize(question, contentWidth * 0.45);
+            doc.text(splitQuestion, questionX, yPos + 2);
+
+            // 2. Draw Answer Box Background (Right Column)
+            let totalAnswerLines = doc.splitTextToSize(answer, answerWidth).length;
+            
+            // Calculate height including reason if present
+            let reasonLines = 0;
+            if (reason) {
+                // Prepend "Reason: " to the reason text for line count
+                reasonLines = doc.splitTextToSize(`Reason: ${reason}`, answerWidth).length;
+                totalAnswerLines += reasonLines + 1; // +1 for the separation line/space
+            }
+
+            const boxHeight = (Math.max(1, totalAnswerLines) * 5) + 4; // 5mm per line + padding (min 1 line high)
+
+            doc.setFillColor(240, 248, 255); // Light blue background
+            doc.roundedRect(answerX, yPos - 1, answerWidth + 2, boxHeight, 2, 2, 'F');
+
+            // 3. Draw Answer Text
+            let currentAnswerY = yPos + 2;
+            doc.setFontSize(11).setFont(undefined, 'normal').setTextColor(0, 0, 0);
+            const splitAnswer = doc.splitTextToSize(answer, answerWidth);
+            doc.text(splitAnswer, answerX + 1, currentAnswerY);
+            currentAnswerY += splitAnswer.length * 5;
+
+            // 4. Draw Reason (if applicable)
+            if (reason) {
+                // Add a small divider before the reason
+                currentAnswerY += 1;
+                doc.setDrawColor(200, 200, 200).setLineWidth(0.1);
+                doc.line(answerX + 1, currentAnswerY, answerX + answerWidth + 1, currentAnswerY);
+                currentAnswerY += 2;
+                
+                doc.setFontSize(8).setFont(undefined, 'italic').setTextColor(178, 34, 34); // Red for emphasis
+                const splitReason = doc.splitTextToSize(`Reason: ${reason}`, answerWidth);
+                doc.text(splitReason, answerX + 1, currentAnswerY);
+                currentAnswerY += splitReason.length * 4;
+            }
+
+            // 5. Update Y position based on the tallest column (Q vs A+R)
+            const questionHeight = splitQuestion.length * 5;
+            const contentHeight = Math.max(boxHeight, questionHeight);
+
+            yPos += contentHeight + 4;
+
+            // Draw separation line
+            doc.setDrawColor(220, 220, 220).setLineWidth(0.1);
+            doc.line(marginX, yPos, docWidth - marginX, yPos);
+            yPos += 3;
+        };
+
+        // --- Document Header ---
+
+        doc.setFontSize(24).setFont(undefined, 'bold').setTextColor(25, 25, 112); // Title: Midnight Blue
+        doc.text("ManikShan Foreign Employment PVT LTD", docWidth / 2, yPos, { align: 'center' });
+        yPos += 10;
+        
+        doc.setFontSize(10).setFont(undefined, 'normal').setTextColor(100, 100, 100);
+        doc.text(`Report Generated: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}`, docWidth - marginX, yPos, { align: 'right' });
+        yPos += sectionSpacing;
+
+        doc.setDrawColor(25, 25, 112).setLineWidth(0.5); // Thick separator line
+        doc.line(marginX, yPos, docWidth - marginX, yPos);
+        yPos += sectionSpacing;
+
+        // --- Data Structure with Reason Check ---
+        const data = [
+            // 1. Personal Details
+            { section: "1. Personal Details", items: [
+                { q: 'Name:', a: document.getElementById('name').value },
+                { q: 'Email:', a: document.getElementById('email').value },
+                { q: 'Skype ID:', a: document.getElementById('skype').value }
+            ]},
+            // 2. Referral & Agency
+            { section: "2. Program & Referral Information", items: [
+                { q: 'How did you hear about IRES?', a: document.getElementById('referralSource').value },
+                { q: 'Referred by:', a: document.getElementById('referredBy').value },
+                { q: 'Working with any other Agency?', a: getRadioValue('agency'), rName: 'agency' }
+            ]},
+            // 3. Placement Preferences
+            { section: "3. Placement Preferences", items: [
+                { q: 'First Choice Department:', a: document.getElementById('firstChoice').value },
+                { q: 'Second Choice Department:', a: document.getElementById('secondChoice').value },
+                { q: 'When do you want to begin your program?', a: document.getElementById('programStart').value },
+                { q: 'Program Length:', a: `${getRadioValue('length')} months` }
+            ]},
+            // 4. USA Status
+            { section: "4. USA and Placement Status", items: [
+                { q: 'Are you 100% open to ALL locations?', a: getRadioValue('location'), rName: 'location' },
+                { q: 'Do you want a Custom Placement with another candidate?', a: getRadioValue('customPlacement'), rName: 'customPlacement' },
+                { q: 'Have you ever trained/worked in the USA?', a: getRadioValue('workedUSA'), rName: 'workedUSA' }, // Defaulted to YES
+                { q: 'Do you have any family that resides in the USA?', a: getRadioValue('familyUSA'), rName: 'familyUSA' }
+            ]},
+            // 5. Health & Legal Status
+            { section: "5. Health & Legal & Visa Status", items: [
+                { q: 'Are you vaccinated?', a: getRadioValue('vaccinated') },
+                { q: 'If yes, what vaccine?', a: document.getElementById('vaccineType').value },
+                { q: 'Do you have any pre-existing medical conditions?', a: getRadioValue('medical'), rName: 'medical' },
+                { q: 'Are you currently under a doctor’s care?', a: getRadioValue('doctorCare'), rName: 'doctorCare' },
+                { q: 'Have you ever been arrested or convicted of a crime?', a: getRadioValue('crime'), rName: 'crime' },
+                { q: 'Have you ever been denied a US Visa or denied entry?', a: getRadioValue('visa'), rName: 'visa' }
+            ]}
+        ];
+
+        // --- Document Generation Loop ---
+
+        data.forEach(sectionData => {
+            checkPageBreak(yPos, sectionSpacing * 2);
+            
+            // Add Section Header
+            doc.setFontSize(16).setFont(undefined, 'bold').setTextColor(0, 128, 0); // Section Header: Green
+            doc.text(sectionData.section, marginX, yPos);
+            yPos += 5;
+            doc.setDrawColor(0, 128, 0).setLineWidth(0.4);
+            doc.line(marginX, yPos, docWidth - marginX, yPos); 
+            yPos += 7;
+
+            // Add Questions/Answers
+            sectionData.items.forEach(item => {
+                // Get reason only if the answer is 'No'
+                const reason = (item.a === 'No') ? getReason(item.rName, item.a) : null;
+                addDetail(doc, item.q, item.a, reason);
+            });
+            yPos += 5; // Extra spacing after section
+        });
+
+
+        // --- Footer (Page Numbers) ---
+        const totalPages = doc.internal.getNumberOfPages();
+        for (let i = 1; i <= totalPages; i++) {
+            doc.setPage(i);
+            doc.setFontSize(8).setFont(undefined, 'italic').setTextColor(150, 150, 150);
+            doc.text(`Page ${i} of ${totalPages}`, docWidth / 2, pageHeight - 10, { align: 'center' });
+        }
+
+
+        // --- Save PDF ---
+        doc.save(`IRES_Questionnaire_Report.pdf`);
+    }
+</script>
+
+</body>
+</html>
