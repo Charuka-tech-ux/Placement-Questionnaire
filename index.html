@@ -4,18 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ManikShan Foreign Employment PVT LTD</title>
-    <!-- Load jspdf for PDF generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <!-- Load Tailwind CSS for modern, responsive styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Custom font and basic body setup */
         body { font-family: "Inter", sans-serif; background-color: #f0f4f8; }
-        /* Style for required radio checked status */
-        input[type="radio"]:checked + label {
-            color: #1d4ed8; /* Blue-700 */
-            font-weight: 600;
-        }
         /* Custom style for the reason input */
         .reason-input-field {
             border: 1px solid #d1d5db; /* Gray-300 */
@@ -41,9 +34,8 @@
 
 <form id="questionnaireForm" onsubmit="event.preventDefault(); generatePDF();" class="container bg-white p-6 sm:p-10 rounded-xl shadow-2xl mx-auto w-full max-w-4xl border border-blue-100">
     <h1 class="text-2xl sm:text-3xl font-extrabold text-blue-800 text-center mb-4">ManikShan Foreign Employment PVT LTD</h1>
-    <p class="text-center text-gray-500 mb-8 text-sm sm:text-base">All fields marked with <span class="text-red-500">*</span> are mandatory. Please fill in all details.</p>
+    <p class="text-center text-gray-500 mb-8 text-sm sm:text-base">Please fill in all details.</p>
 
-    <!-- Helper functions to toggle reason fields and other referral input -->
     <script>
         const toggleReason = (name, show) => {
             const container = document.getElementById(`${name}ReasonContainer`);
@@ -51,14 +43,9 @@
                 container.classList.toggle('hidden', !show);
                 // The reason input itself
                 const reasonInput = document.getElementById(`${name}Reason`);
-                // Make the reason required if it's visible, unless it's the customPlacement (which is optional)
-                if (reasonInput) {
-                    reasonInput.required = show && name !== 'customPlacement'; 
-                    if (show) {
-                        reasonInput.focus();
-                    } else {
-                        reasonInput.value = ''; 
-                    }
+                // Reason fields are no longer required
+                if (reasonInput && !show) {
+                    reasonInput.value = ''; 
                 }
             }
         };
@@ -68,7 +55,7 @@
             const input = document.getElementById('otherReferralSource');
             const isOther = value === 'Other';
             container.classList.toggle('hidden', !isOther);
-            input.required = isOther;
+            // Input is no longer required
             if (!isOther) {
                 input.value = '';
             }
@@ -83,16 +70,14 @@
             container.classList.toggle('hidden', !show);
             
             inputs.forEach(input => {
-                input.required = show;
-                // Clear state if hiding
+                // Radio buttons are no longer required
                 if (!show) {
                     input.checked = false;
                 }
             });
 
-            // The 'vaccineType' input should only be required if 'Yes' is selected for vaccinated
+            // The 'vaccineType' input is no longer required
             const vaccineTypeInput = document.getElementById('vaccineType');
-            vaccineTypeInput.required = value === 'Yes';
             if (value !== 'Yes') {
                 vaccineTypeInput.value = '';
             }
@@ -134,45 +119,41 @@
                 if (this.checked) {
                     programStartInput.value = 'As soon as possible';
                     programStartInput.disabled = true;
-                    programStartInput.required = false; 
                 } else {
                     programStartInput.value = '';
                     programStartInput.disabled = false;
-                    programStartInput.required = true;
                     programStartInput.focus();
                 }
             });
         });
     </script>
 
-    <!-- Personal Details Section -->
     <div class="space-y-5">
         <h2 class="text-xl font-semibold text-gray-700 border-b pb-2 mb-4">1. Personal Details</h2>
         <div class="grid md:grid-cols-2 gap-6">
             <div class="form-group">
-                <label for="name" class="block font-medium text-gray-600 mb-1">Name: <span class="text-red-500">*</span></label>
-                <input type="text" id="name" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                <label for="name" class="block font-medium text-gray-600 mb-1">Name:</label>
+                <input type="text" id="name" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150">
             </div>
             <div class="form-group">
-                <label for="email" class="block font-medium text-gray-600 mb-1">Email: <span class="text-red-500">*</span></label>
-                <input type="email" id="email" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                <label for="email" class="block font-medium text-gray-600 mb-1">Email:</label>
+                <input type="email" id="email" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150">
             </div>
         </div>
         <div class="form-group">
-            <label for="skype" class="block font-medium text-gray-600 mb-1">Skype ID: <span class="text-red-500">*</span></label>
-            <input type="text" id="skype" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+            <label for="skype" class="block font-medium text-gray-600 mb-1">Skype ID:</label>
+            <input type="text" id="skype" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150">
         </div>
     </div>
     
     <div class="my-8 border-t border-gray-200"></div>
 
-    <!-- Referral & Agency Section -->
     <div class="space-y-5">
         <h2 class="text-xl font-semibold text-gray-700 border-b pb-2 mb-4">2. Program & Referral Information</h2>
         <div class="grid md:grid-cols-2 gap-6">
             <div class="form-group">
-                <label for="referralSource" class="block font-medium text-gray-600 mb-1">How did you hear about ManikShan Foreign Employment? <span class="text-red-500">*</span></label>
-                <select id="referralSource" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150" onchange="toggleOtherReferral(this.value)">
+                <label for="referralSource" class="block font-medium text-gray-600 mb-1">How did you hear about ManikShan Foreign Employment?</label>
+                <select id="referralSource" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150" onchange="toggleOtherReferral(this.value)">
                     <option value="" disabled selected>Select an option</option>
                     <option value="Referral">Referral</option>
                     <option value="School">School</option>
@@ -184,95 +165,86 @@
                 </select>
             </div>
             <div class="form-group">
-                <label for="referredBy" class="block font-medium text-gray-600 mb-1"> Were you referred by someone? If yes, who?  <span class="text-red-500">*</span></label>
-                <input type="text" id="referredBy" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                <label for="referredBy" class="block font-medium text-gray-600 mb-1"> Were you referred by someone? If yes, who?</label>
+                <input type="text" id="referredBy" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150">
             </div>
         </div>
          <div class="form-group hidden" id="otherReferralContainer">
-            <label for="otherReferralSource" class="block font-medium text-gray-600 mb-1">Please specify: <span class="text-red-500">*</span></label>
+            <label for="otherReferralSource" class="block font-medium text-gray-600 mb-1">Please specify:</label>
             <input type="text" id="otherReferralSource" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150">
         </div>
-        <!-- Question with Reason field (AGENCY - LOGIC MODIFIED: shows on YES, LABEL CORRECTED) -->
         <div class="form-group">
-            <label class="block font-medium text-gray-600 mb-2">Working with any other Agency? <span class="text-red-500">*</span></label>
+            <label class="block font-medium text-gray-600 mb-2">Working with any other Agency?</label>
             <div class="radio-group flex flex-wrap gap-x-8 gap-y-4">
-                <!-- Agency reason now shows on YES -->
-                <div class="flex items-center"><input type="radio" name="agency" value="Yes" id="agencyYes" required class="h-4 w-4 text-blue-600" onchange="toggleReason('agency', true)"><label for="agencyYes" class="ml-2 text-gray-700">Yes</label></div>
-                <div class="flex items-center"><input type="radio" name="agency" value="No" id="agencyNo" required class="h-4 w-4 text-blue-600" onchange="toggleReason('agency', false)"><label for="agencyNo" class="ml-2 text-gray-700">No</label></div>
+                <div class="flex items-center"><input type="radio" name="agency" value="Yes" id="agencyYes" class="h-4 w-4 text-blue-600" onchange="toggleReason('agency', true)"><label for="agencyYes" class="ml-2 text-gray-700">Yes</label></div>
+                <div class="flex items-center"><input type="radio" name="agency" value="No" id="agencyNo" class="h-4 w-4 text-blue-600" onchange="toggleReason('agency', false)"><label for="agencyNo" class="ml-2 text-gray-700">No</label></div>
             </div>
             <div id="agencyReasonContainer" class="mt-3 hidden transition duration-300">
-                <!-- CORRECTED LABEL -->
-                <label for="agencyReason" class="block text-sm text-gray-600 mb-1">If yes, what Agency and what fees are you required to pay?: <span class="text-red-500">*</span></label>
-                <input type="text" id="agencyReason" class="w-full p-2 rounded-lg reason-input-field" value="" required>
+                <label for="agencyReason" class="block text-sm text-gray-600 mb-1">If yes, what Agency and what fees are you required to pay?:</label>
+                <input type="text" id="agencyReason" class="w-full p-2 rounded-lg reason-input-field" value="">
             </div>
         </div>
     </div>
 
     <div class="my-8 border-t border-gray-200"></div>
 
-    <!-- Program Choices Section -->
     <div class="space-y-5">
         <h2 class="text-xl font-semibold text-gray-700 border-b pb-2 mb-4">3. Placement Preferences</h2>
         <div class="form-group">
-            <label class="block font-medium text-gray-600 mb-2">What department(s) are you applying for? <span class="text-red-500">*</span></label>
+            <label class="block font-medium text-gray-600 mb-2">What department(s) are you applying for?</label>
             <div class="flex flex-col sm:flex-row sm:items-end sm:space-x-6 space-y-4 sm:space-y-0">
                 <div class="flex-1">
                     <label for="firstChoice" class="block text-sm font-medium text-gray-500">First Choice:</label>
-                    <input type="text" id="firstChoice" required class="w-full p-2 bg-transparent border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 transition">
+                    <input type="text" id="firstChoice" class="w-full p-2 bg-transparent border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 transition">
                 </div>
                 <div class="flex-1">
                     <label for="secondChoice" class="block text-sm font-medium text-gray-500">Second Choice:</label>
-                    <input type="text" id="secondChoice" required class="w-full p-2 bg-transparent border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 transition">
+                    <input type="text" id="secondChoice" class="w-full p-2 bg-transparent border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 transition">
                 </div>
             </div>
         </div>
         <div class="form-group">
-            <!-- CORRECTED: The final output must be "When do you want to begin your program and for how long?" with the months in the blank in the PDF. The input field below captures the start date. The length is captured by the radio buttons. -->
-            <label class="block font-medium text-gray-600 mb-3">When do you want to begin your program and for how long? <span class="text-red-500">*</span></label>
+            <label class="block font-medium text-gray-600 mb-3">When do you want to begin your program and for how long?</label>
             <div class="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-4 mb-4">
-                <input type="text" id="programStart" required placeholder="Start Date e.g., 'Next Fall' or 'June 2025'" class="flex-grow p-2 bg-transparent border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 transition">
+                <input type="text" id="programStart" placeholder="Start Date e.g., 'Next Fall' or 'June 2025'" class="flex-grow p-2 bg-transparent border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 transition">
                 <div class="flex items-center">
                     <input type="checkbox" id="asap" name="asap" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
                     <label for="asap" class="ml-2 text-gray-700 whitespace-nowrap">As soon as possible</label>
                 </div>
             </div>
-            <!-- Program Length Radios -->
             <div class="radio-group flex flex-wrap items-center gap-x-6 gap-y-3">
                 <span class="font-medium text-gray-600 mr-2">Length:</span>
-                <div class="flex items-center"><input type="radio" name="length" value="6 months" id="len6" required class="h-4 w-4 text-blue-600"><label for="len6" class="ml-2 text-gray-700">6 months</label></div>
-                <div class="flex items-center"><input type="radio" name="length" value="9 months" id="len9" required class="h-4 w-4 text-blue-600"><label for="len9" class="ml-2 text-gray-700">9 months</label></div>
-                <div class="flex items-center"><input type="radio" name="length" value="12 months" id="len12" required class="h-4 w-4 text-blue-600"><label for="len12" class="ml-2 text-gray-700">12 months</label></div>
-                <div class="flex items-center"><input type="radio" name="length" value="18 months" id="len18" required class="h-4 w-4 text-blue-600"><label for="len18" class="ml-2 text-gray-700">18 months</label></div>
+                <div class="flex items-center"><input type="radio" name="length" value="6 months" id="len6" class="h-4 w-4 text-blue-600"><label for="len6" class="ml-2 text-gray-700">6 months</label></div>
+                <div class="flex items-center"><input type="radio" name="length" value="9 months" id="len9" class="h-4 w-4 text-blue-600"><label for="len9" class="ml-2 text-gray-700">9 months</label></div>
+                <div class="flex items-center"><input type="radio" name="length" value="12 months" id="len12" class="h-4 w-4 text-blue-600"><label for="len12" class="ml-2 text-gray-700">12 months</label></div>
+                <div class="flex items-center"><input type="radio" name="length" value="18 months" id="len18" class="h-4 w-4 text-blue-600"><label for="len18" class="ml-2 text-gray-700">18 months</label></div>
             </div>
         </div>
     </div>
 
     <div class="my-8 border-t border-gray-200"></div>
 
-    <!-- USA and Placement Status Section -->
     <div class="space-y-5">
         <h2 class="text-xl font-semibold text-gray-700 border-b pb-2 mb-4">4. USA and Placement Status</h2>
         
         <div class="grid sm:grid-cols-2 gap-6">
-            <!-- Question with Reason field: Location (shows on NO) -->
             <div class="form-group">
-                <label class="block font-medium text-gray-600 mb-2">Are you 100% open to ALL locations? <span class="text-red-500">*</span></label>
+                <label class="block font-medium text-gray-600 mb-2">Are you 100% open to ALL locations?</label>
                 <div class="radio-group flex flex-wrap gap-x-8 gap-y-4">
-                    <div class="flex items-center"><input type="radio" name="location" value="Yes" id="locYes" required class="h-4 w-4 text-blue-600" onchange="toggleReason('location', false)"><label for="locYes" class="ml-2 text-gray-700">Yes</label></div>
-                    <div class="flex items-center"><input type="radio" name="location" value="No" id="locNo" required class="h-4 w-4 text-blue-600" onchange="toggleReason('location', true)"><label for="locNo" class="ml-2 text-gray-700">No</label></div>
+                    <div class="flex items-center"><input type="radio" name="location" value="Yes" id="locYes" class="h-4 w-4 text-blue-600" onchange="toggleReason('location', false)"><label for="locYes" class="ml-2 text-gray-700">Yes</label></div>
+                    <div class="flex items-center"><input type="radio" name="location" value="No" id="locNo" class="h-4 w-4 text-blue-600" onchange="toggleReason('location', true)"><label for="locNo" class="ml-2 text-gray-700">No</label></div>
                 </div>
                 <div id="locationReasonContainer" class="mt-3 hidden transition duration-300">
-                    <label for="locationReason" class="block text-sm text-gray-600 mb-1"> If not, where would you like to be placed? <span class="text-red-500">*</span></label>
-                    <input type="text" id="locationReason" class="w-full p-2 rounded-lg reason-input-field" value="" required>
+                    <label for="locationReason" class="block text-sm text-gray-600 mb-1"> If not, where would you like to be placed?</label>
+                    <input type="text" id="locationReason" class="w-full p-2 rounded-lg reason-input-field" value="">
                 </div>
             </div>
 
-            <!-- Question with Reason field: Custom Placement (shows on YES, not required) -->
             <div class="form-group">
-                <label class="block font-medium text-gray-600 mb-2">Do you want a Custom Placement with another candidate? <span class="text-red-500">*</span></label>
+                <label class="block font-medium text-gray-600 mb-2">Do you want a Custom Placement with another candidate?</label>
                 <div class="radio-group flex flex-wrap gap-x-8 gap-y-4">
-                    <div class="flex items-center"><input type="radio" name="customPlacement" value="Yes" id="cpYes" required class="h-4 w-4 text-blue-600" onchange="toggleReason('customPlacement', true)"><label for="cpYes" class="ml-2 text-gray-700">Yes</label></div>
-                    <div class="flex items-center"><input type="radio" name="customPlacement" value="No" id="cpNo" required class="h-4 w-4 text-blue-600" onchange="toggleReason('customPlacement', false)"><label for="cpNo" class="ml-2 text-gray-700">No</label></div>
+                    <div class="flex items-center"><input type="radio" name="customPlacement" value="Yes" id="cpYes" class="h-4 w-4 text-blue-600" onchange="toggleReason('customPlacement', true)"><label for="cpYes" class="ml-2 text-gray-700">Yes</label></div>
+                    <div class="flex items-center"><input type="radio" name="customPlacement" value="No" id="cpNo" class="h-4 w-4 text-blue-600" onchange="toggleReason('customPlacement', false)"><label for="cpNo" class="ml-2 text-gray-700">No</label></div>
                 </div>
                 <div id="customPlacementReasonContainer" class="mt-3 hidden transition duration-300">
                     <label for="customPlacementReason" class="block text-sm text-gray-600 mb-1">If yes, what is the full name of the other candidate?</label>
@@ -280,29 +252,27 @@
                 </div>
             </div>
 
-            <!-- Question with Reason field: Worked USA (shows on YES) -->
             <div class="form-group">
-                <label class="block font-medium text-gray-600 mb-2">Have you ever trained/worked in the USA? <span class="text-red-500">*</span></label>
+                <label class="block font-medium text-gray-600 mb-2">Have you ever trained/worked in the USA?</label>
                 <div class="radio-group flex flex-wrap gap-x-8 gap-y-4">
-                    <div class="flex items-center"><input type="radio" name="workedUSA" value="Yes" id="usaWorkYes" required class="h-4 w-4 text-blue-600" onchange="toggleReason('workedUSA', true)"><label for="usaWorkYes" class="ml-2 text-gray-700">Yes</label></div>
-                    <div class="flex items-center"><input type="radio" name="workedUSA" value="No" id="usaWorkNo" required class="h-4 w-4 text-blue-600" onchange="toggleReason('workedUSA', false)"><label for="usaWorkNo" class="ml-2 text-gray-700">No</label></div>
+                    <div class="flex items-center"><input type="radio" name="workedUSA" value="Yes" id="usaWorkYes" class="h-4 w-4 text-blue-600" onchange="toggleReason('workedUSA', true)"><label for="usaWorkYes" class="ml-2 text-gray-700">Yes</label></div>
+                    <div class="flex items-center"><input type="radio" name="workedUSA" value="No" id="usaWorkNo" class="h-4 w-4 text-blue-600" onchange="toggleReason('workedUSA', false)"><label for="usaWorkNo" class="ml-2 text-gray-700">No</label></div>
                 </div>
                  <div id="workedUSAReasonContainer" class="mt-3 hidden transition duration-300">
-                    <label for="workedUSAReason" class="block text-sm text-gray-600 mb-1">If yes, when & what type of Visa did you receive? <span class="text-red-500">*</span></label>
-                    <input type="text" id="workedUSAReason" class="w-full p-2 rounded-lg reason-input-field" value="" required>
+                    <label for="workedUSAReason" class="block text-sm text-gray-600 mb-1">If yes, when & what type of Visa did you receive?</label>
+                    <input type="text" id="workedUSAReason" class="w-full p-2 rounded-lg reason-input-field" value="">
                 </div>
             </div>
 
-            <!-- Question with Reason field: Family USA (shows on YES) -->
             <div class="form-group">
-                <label class="block font-medium text-gray-600 mb-2">Do you have any family that resides in the USA? <span class="text-red-500">*</span></label>
+                <label class="block font-medium text-gray-600 mb-2">Do you have any family that resides in the USA?</label>
                 <div class="radio-group flex flex-wrap gap-x-8 gap-y-4">
-                    <div class="flex items-center"><input type="radio" name="familyUSA" value="Yes" id="familyYes" required class="h-4 w-4 text-blue-600" onchange="toggleReason('familyUSA', true)"><label for="familyYes" class="ml-2 text-gray-700">Yes</label></div>
-                    <div class="flex items-center"><input type="radio" name="familyUSA" value="No" id="familyNo" required class="h-4 w-4 text-blue-600" onchange="toggleReason('familyUSA', false)"><label for="familyNo" class="ml-2 text-gray-700">No</label></div>
+                    <div class="flex items-center"><input type="radio" name="familyUSA" value="Yes" id="familyYes" class="h-4 w-4 text-blue-600" onchange="toggleReason('familyUSA', true)"><label for="familyYes" class="ml-2 text-gray-700">Yes</label></div>
+                    <div class="flex items-center"><input type="radio" name="familyUSA" value="No" id="familyNo" class="h-4 w-4 text-blue-600" onchange="toggleReason('familyUSA', false)"><label for="familyNo" class="ml-2 text-gray-700">No</label></div>
                 </div>
                 <div id="familyUSAReasonContainer" class="mt-3 hidden transition duration-300">
-                    <label for="familyUSAReason" class="block text-sm text-gray-600 mb-1">If yes, please list their name, relationship, and location: <span class="text-red-500">*</span></label>
-                    <input type="text" id="familyUSAReason" class="w-full p-2 rounded-lg reason-input-field" value="" required>
+                    <label for="familyUSAReason" class="block text-sm text-gray-600 mb-1">If yes, please list their name, relationship, and location:</label>
+                    <input type="text" id="familyUSAReason" class="w-full p-2 rounded-lg reason-input-field" value="">
                 </div>
             </div>
         </div>
@@ -310,26 +280,24 @@
 
     <div class="my-8 border-t border-gray-200"></div>
 
-    <!-- Health & Legal Status Section -->
     <div class="space-y-5">
         <h2 class="text-xl font-semibold text-gray-700 border-b pb-2 mb-4">5. Health & Legal Status</h2>
         
         <div class="grid md:grid-cols-2 gap-6">
             <div class="form-group col-span-2">
-                <label class="block font-medium text-gray-600 mb-2">Are you vaccinated? <span class="text-red-500">*</span></label>
+                <label class="block font-medium text-gray-600 mb-2">Are you vaccinated?</label>
                 <div class="radio-group flex flex-wrap gap-x-8 gap-y-4">
-                    <div class="flex items-center"><input type="radio" name="vaccinated" value="Yes" id="vaxYes" required class="h-4 w-4 text-blue-600" onchange="toggleWillingToVaccinate('Yes')"><label for="vaxYes" class="ml-2 text-gray-700">Yes</label></div>
-                    <div class="flex items-center"><input type="radio" name="vaccinated" value="No" id="vaxNo" required class="h-4 w-4 text-blue-600" onchange="toggleWillingToVaccinate('No')"><label for="vaxNo" class="ml-2 text-gray-700">No</label></div>
+                    <div class="flex items-center"><input type="radio" name="vaccinated" value="Yes" id="vaxYes" class="h-4 w-4 text-blue-600" onchange="toggleWillingToVaccinate('Yes')"><label for="vaxYes" class="ml-2 text-gray-700">Yes</label></div>
+                    <div class="flex items-center"><input type="radio" name="vaccinated" value="No" id="vaxNo" class="h-4 w-4 text-blue-600" onchange="toggleWillingToVaccinate('No')"><label for="vaxNo" class="ml-2 text-gray-700">No</label></div>
                 </div>
             </div>
             <div class="form-group col-span-2">
-                <label for="vaccineType" class="block font-medium text-gray-600 mb-1">If yes, what vaccine? <span class="text-red-500">*</span></label>
+                <label for="vaccineType" class="block font-medium text-gray-600 mb-1">If yes, what vaccine?</label>
                 <input type="text" id="vaccineType" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150">
             </div>
             
-            <!-- CORRECTED: NEW QUESTION: Willing to get vaccinated (CONDITIONAL: shows on VACCINATED=NO) -->
-             <div class="form-group col-span-2 hidden" id="willingToVaxContainer">
-                <label class="block font-medium text-gray-600 mb-2">If not vaccinated, are you willing to get vaccinated? <span class="text-red-500">*</span></label>
+            <div class="form-group col-span-2 hidden" id="willingToVaxContainer">
+                <label class="block font-medium text-gray-600 mb-2">If not vaccinated, are you willing to get vaccinated?</label>
                 <div class="radio-group flex flex-wrap gap-x-8 gap-y-4">
                     <div class="flex items-center"><input type="radio" name="willingToVax" value="Yes" id="willVaxYes" class="h-4 w-4 text-blue-600"><label for="willVaxYes" class="ml-2 text-gray-700">Yes</label></div>
                     <div class="flex items-center"><input type="radio" name="willingToVax" value="No" id="willVaxNo" class="h-4 w-4 text-blue-600"><label for="willVaxNo" class="ml-2 text-gray-700">No</label></div>
@@ -340,61 +308,56 @@
         <div class="my-6 border-t border-gray-200"></div>
         
         <div class="grid sm:grid-cols-2 gap-6">
-            <!-- Question with Reason field: Medical (shows on YES) -->
             <div class="form-group">
-                <label class="block font-medium text-gray-600 mb-2">Do you have any pre-existing medical conditions? <span class="text-red-500">*</span></label>
+                <label class="block font-medium text-gray-600 mb-2">Do you have any pre-existing medical conditions?</label>
                 <div class="radio-group flex flex-wrap gap-x-8 gap-y-4">
-                    <div class="flex items-center"><input type="radio" name="medical" value="Yes" id="medYes" required class="h-4 w-4 text-blue-600" onchange="toggleReason('medical', true)"><label for="medYes" class="ml-2 text-gray-700">Yes</label></div>
-                    <div class="flex items-center"><input type="radio" name="medical" value="No" id="medNo" required class="h-4 w-4 text-blue-600" onchange="toggleReason('medical', false)"><label for="medNo" class="ml-2 text-gray-700">No</label></div>
+                    <div class="flex items-center"><input type="radio" name="medical" value="Yes" id="medYes" class="h-4 w-4 text-blue-600" onchange="toggleReason('medical', true)"><label for="medYes" class="ml-2 text-gray-700">Yes</label></div>
+                    <div class="flex items-center"><input type="radio" name="medical" value="No" id="medNo" class="h-4 w-4 text-blue-600" onchange="toggleReason('medical', false)"><label for="medNo" class="ml-2 text-gray-700">No</label></div>
                 </div>
                 <div id="medicalReasonContainer" class="mt-3 hidden transition duration-300">
-                    <label for="medicalReason" class="block text-sm text-gray-600 mb-1">If yes, what? <span class="text-red-500">*</span></label>
-                    <input type="text" id="medicalReason" class="w-full p-2 rounded-lg reason-input-field" value="" required>
+                    <label for="medicalReason" class="block text-sm text-gray-600 mb-1">If yes, what?</label>
+                    <input type="text" id="medicalReason" class="w-full p-2 rounded-lg reason-input-field" value="">
                 </div>
             </div>
 
-            <!-- Question with Reason field: Doctor Care (shows on YES) -->
             <div class="form-group">
-                <label class="block font-medium text-gray-600 mb-2">Are you currently under a doctor’s care? <span class="text-red-500">*</span></label>
+                <label class="block font-medium text-gray-600 mb-2">Are you currently under a doctor’s care?</label>
                 <div class="radio-group flex flex-wrap gap-x-8 gap-y-4">
-                    <div class="flex items-center"><input type="radio" name="doctorCare" value="Yes" id="docYes" required class="h-4 w-4 text-blue-600" onchange="toggleReason('doctorCare', true)"><label for="docYes" class="ml-2 text-gray-700">Yes</label></div>
-                    <div class="flex items-center"><input type="radio" name="doctorCare" value="No" id="docNo" required class="h-4 w-4 text-blue-600" onchange="toggleReason('doctorCare', false)"><label for="docNo" class="ml-2 text-gray-700">No</label></div>
+                    <div class="flex items-center"><input type="radio" name="doctorCare" value="Yes" id="docYes" class="h-4 w-4 text-blue-600" onchange="toggleReason('doctorCare', true)"><label for="docYes" class="ml-2 text-gray-700">Yes</label></div>
+                    <div class="flex items-center"><input type="radio" name="doctorCare" value="No" id="docNo" class="h-4 w-4 text-blue-600" onchange="toggleReason('doctorCare', false)"><label for="docNo" class="ml-2 text-gray-700">No</label></div>
                 </div>
                 <div id="doctorCareReasonContainer" class="mt-3 hidden transition duration-300">
-                    <label for="doctorCareReason" class="block text-sm text-gray-600 mb-1">If yes, what? <span class="text-red-500">*</span></label>
-                    <input type="text" id="doctorCareReason" class="w-full p-2 rounded-lg reason-input-field" value="" required>
+                    <label for="doctorCareReason" class="block text-sm text-gray-600 mb-1">If yes, what?</label>
+                    <input type="text" id="doctorCareReason" class="w-full p-2 rounded-lg reason-input-field" value="">
                 </div>
             </div>
 
-            <!-- Question with Reason field: Crime (shows on YES) -->
             <div class="form-group">
-                <label class="block font-medium text-gray-600 mb-2">Have you ever been arrested or convicted of a crime? <span class="text-red-500">*</span></label>
+                <label class="block font-medium text-gray-600 mb-2">Have you ever been arrested or convicted of a crime?</label>
                 <div class="radio-group flex flex-wrap gap-x-8 gap-y-4">
-                    <div class="flex items-center"><input type="radio" name="crime" value="Yes" id="crimeYes" required class="h-4 w-4 text-blue-600" onchange="toggleReason('crime', true)"><label for="crimeYes" class="ml-2 text-gray-700">Yes</label></div>
-                    <div class="flex items-center"><input type="radio" name="crime" value="No" id="crimeNo" required class="h-4 w-4 text-blue-600" onchange="toggleReason('crime', false)"><label for="crimeNo" class="ml-2 text-gray-700">No</label></div>
+                    <div class="flex items-center"><input type="radio" name="crime" value="Yes" id="crimeYes" class="h-4 w-4 text-blue-600" onchange="toggleReason('crime', true)"><label for="crimeYes" class="ml-2 text-gray-700">Yes</label></div>
+                    <div class="flex items-center"><input type="radio" name="crime" value="No" id="crimeNo" class="h-4 w-4 text-blue-600" onchange="toggleReason('crime', false)"><label for="crimeNo" class="ml-2 text-gray-700">No</label></div>
                 </div>
                 <div id="crimeReasonContainer" class="mt-3 hidden transition duration-300">
-                    <label for="crimeReason" class="block text-sm text-gray-600 mb-1">If yes, what? <span class="text-red-500">*</span></label>
-                    <input type="text" id="crimeReason" class="w-full p-2 rounded-lg reason-input-field" value="" required>
+                    <label for="crimeReason" class="block text-sm text-gray-600 mb-1">If yes, what?</label>
+                    <input type="text" id="crimeReason" class="w-full p-2 rounded-lg reason-input-field" value="">
                 </div>
             </div>
 
-            <!-- Question with Reason field: Visa (shows on YES) -->
             <div class="form-group">
-                <label class="block font-medium text-gray-600 mb-2">Have you ever been denied a US Visa or denied entry? <span class="text-red-500">*</span></label>
+                <label class="block font-medium text-gray-600 mb-2">Have you ever been denied a US Visa or denied entry?</label>
                 <div class="radio-group flex flex-wrap gap-x-8 gap-y-4">
-                    <div class="flex items-center"><input type="radio" name="visa" value="Yes" id="visaYes" required class="h-4 w-4 text-blue-600" onchange="toggleReason('visa', true)"><label for="visaYes" class="ml-2 text-gray-700">Yes</label></div>
-                    <div class="flex items-center"><input type="radio" name="visa" value="No" id="visaNo" required class="h-4 w-4 text-blue-600" onchange="toggleReason('visa', false)"><label for="visaNo" class="ml-2 text-gray-700">No</label></div>
+                    <div class="flex items-center"><input type="radio" name="visa" value="Yes" id="visaYes" class="h-4 w-4 text-blue-600" onchange="toggleReason('visa', true)"><label for="visaYes" class="ml-2 text-gray-700">Yes</label></div>
+                    <div class="flex items-center"><input type="radio" name="visa" value="No" id="visaNo" class="h-4 w-4 text-blue-600" onchange="toggleReason('visa', false)"><label for="visaNo" class="ml-2 text-gray-700">No</label></div>
                 </div>
                 <div id="visaReasonContainer" class="mt-3 hidden transition duration-300">
-                    <label for="visaReason" class="block text-sm text-gray-600 mb-1">If yes, what? <span class="text-red-500">*</span></label>
-                    <input type="text" id="visaReason" class="w-full p-2 rounded-lg reason-input-field" value="" required>
+                    <label for="visaReason" class="block text-sm text-gray-600 mb-1">If yes, what?</label>
+                    <input type="text" id="visaReason" class="w-full p-2 rounded-lg reason-input-field" value="">
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Download Button -->
     <button type="submit" class="mt-10 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg text-xl shadow-lg transition duration-200 ease-in-out transform hover:scale-[1.01] focus:outline-none focus:ring-4 focus:ring-green-500 focus:ring-opacity-50 w-full">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -424,13 +387,16 @@
             for (let i = 0; i < radios.length; i++) {
                 if (radios[i].checked) return radios[i].value;
             }
-            return 'N/A';
+            // Changed from 'N/A' to 'Unanswered' to reflect that fields are no longer mandatory
+            return 'Unanswered'; 
         };
         
         const getReferralValue = () => {
             const referralSelect = document.getElementById('referralSource');
+            if (!referralSelect.value) return 'Unanswered'; // Handle unselected case
             if (referralSelect.value === 'Other') {
-                return `Other: ${document.getElementById('otherReferralSource').value}`;
+                const otherValue = document.getElementById('otherReferralSource').value || 'Not specified';
+                return `Other: ${otherValue}`;
             }
             return referralSelect.value;
         };
@@ -438,15 +404,16 @@
         const getReason = (name) => {
             const reasonInput = document.getElementById(`${name}Reason`);
             const reason = reasonInput ? reasonInput.value.trim() : '';
-            return reason || 'No additional details provided.';
+            // Change default message for non-required fields
+            return reason || 'No details provided.'; 
         };
 
         // CORRECTED: Get the conditional vaccination question value
         const getWillingToVax = () => {
             if (getRadioValue('vaccinated') === 'No') {
                 const willingVax = getRadioValue('willingToVax');
-                // Use a proper message if the required field is N/A
-                return willingVax !== 'N/A' ? willingVax : 'Unanswered'; 
+                // Use a proper message for unanswered conditional field
+                return willingVax !== 'Unanswered' ? willingVax : 'Unanswered (Condition met)'; 
             }
             return 'N/A (Vaccinated: Yes)';
         };
@@ -471,12 +438,15 @@
             const questionX = marginX;
             const answerX = marginX + contentWidth * 0.50;
             const answerWidth = contentWidth * 0.50 - 2;
+            
+            // Use 'Unanswered' for empty text inputs that are no longer required
+            const finalAnswer = (typeof answer === 'string' && answer.trim() === '') ? 'Unanswered' : answer;
 
             doc.setFontSize(10).setFont(undefined, 'bold').setTextColor(40, 40, 40); 
             const splitQuestion = doc.splitTextToSize(question, contentWidth * 0.45);
             doc.text(splitQuestion, questionX, yPos + 2);
 
-            let totalAnswerLines = doc.splitTextToSize(answer, answerWidth).length;
+            let totalAnswerLines = doc.splitTextToSize(finalAnswer, answerWidth).length;
             
             let reasonLines = 0;
             if (reason) {
@@ -491,7 +461,7 @@
 
             let currentAnswerY = yPos + 2;
             doc.setFontSize(11).setFont(undefined, 'normal').setTextColor(0, 0, 0);
-            const splitAnswer = doc.splitTextToSize(answer, answerWidth);
+            const splitAnswer = doc.splitTextToSize(finalAnswer, answerWidth);
             doc.text(splitAnswer, answerX + 1, currentAnswerY);
             currentAnswerY += splitAnswer.length * 5;
 
@@ -532,10 +502,10 @@
         
         // --- Pre-process answers for complex fields ---
         const programStartValue = document.getElementById('asap').checked ? 'As soon as possible' : document.getElementById('programStart').value;
-        const departmentAnswer = `First Choice: ${document.getElementById('firstChoice').value}\nSecond Choice: ${document.getElementById('secondChoice').value}`;
+        const departmentAnswer = `First Choice: ${document.getElementById('firstChoice').value || 'Unanswered'}\nSecond Choice: ${document.getElementById('secondChoice').value || 'Unanswered'}`;
         
         // CORRECTED: Program answer now displays the start date AND the selected length.
-        const programAnswer = `${programStartValue} (${getRadioValue('length')})`;
+        const programAnswer = `${programStartValue || 'Unanswered'} (${getRadioValue('length')})`;
 
         // --- Data Structure with Reason Check ---
         const data = [
@@ -589,6 +559,7 @@
                 if (item.conditionalFor && getRadioValue(item.conditionalFor) !== item.expectedValue) {
                     return; 
                 }
+                // Only provide a reason if the radio button matches the required response (e.g., Yes for Medical) AND a reason was actually typed.
                 const reason = (item.reasonFor && item.a === item.reasonFor) ? getReason(item.rName) : null;
                 addDetail(doc, item.q, item.a, reason);
             });
